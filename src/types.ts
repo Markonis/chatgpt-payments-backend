@@ -28,6 +28,8 @@ export interface Purchase {
   orderId: string; // Used for both orders and subscriptions
   offerId: string;
   features: Feature[];
-  purchaseDate: number; // Unix milliseconds timestamp
+  created: number; // Unix milliseconds timestamp
   status: PurchaseStatus;
 }
+
+export type WithId<T> = T & {id: string};

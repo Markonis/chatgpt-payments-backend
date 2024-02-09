@@ -5,10 +5,10 @@ export async function handleSubscriptionUpdated(data: any) {
   const status = data.status; // e.g., 'active', 'paused', 'cancelled'
 
   // Retrieve the corresponding purchase
-  const purchaseRef = admin.firestore().collection('purchases').doc(orderId.toString());
-  const purchaseSnapshot = await purchaseRef.get();
+  const purchaseRef = admin.firestore().collection('purchases').doc(orderId);
+  const purchase = await purchaseRef.get();
 
-  if (!purchaseSnapshot.exists) {
+  if (!purchase.exists) {
     throw new Error(`No purchase found for order ID: ${orderId}`);
   }
 

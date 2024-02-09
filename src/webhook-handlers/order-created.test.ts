@@ -48,7 +48,7 @@ describe('handleOrderCreated', () => {
       orderId: 'order_123',
       offerId: 'some_offer_id',
       features: mockOfferData.features,
-      purchaseDate: expect.any(Number),
+      created: expect.any(Number),
       status: PurchaseStatus.Active
     };
 

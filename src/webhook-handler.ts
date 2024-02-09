@@ -1,20 +1,18 @@
-import * as functions from 'firebase-functions';
 import * as crypto from 'crypto';
+import * as functions from 'firebase-functions';
 import { handleOrderCreated } from './webhook-handlers/order-created';
 import { handleOrderRefunded } from './webhook-handlers/order-refunded';
-import { handleSubscriptionCreated } from './webhook-handlers/subscription-created';
 import { handleSubscriptionUpdated } from './webhook-handlers/subscription-updated';
 
-
-export const handleLemonSqueezyWebhook = functions.https.onRequest(async (request, response) => {
+export const handleLemonSqueezyWebhook = functions.https.onRequest(async (req, res) => {
   // Verify Lemon Squeezy Signature for Security
-  if (!verifyLemonSqueezySignature(request)) {
-    response.status(403).send('Invalid signature');
+  if (!verifyLemonSqueezySignature(req)) {
+    res.sendStatus(403);
     return;
   }
 
-  const eventName = request.body.event_name;
-  const eventData = request.body.data;
+  const eventName = req.body.event_name;
+  const eventData = req.body.data;
 
   switch (eventName) {
     case 'order_created':
@@ -24,7 +22,7 @@ export const handleLemonSqueezyWebhook = functions.https.onRequest(async (reques
       await handleOrderRefunded(eventData);
       break;
     case 'subscription_created':
-      await handleSubscriptionCreated(eventData);
+      await handleOrderCreated(eventData);
       break;
     case 'subscription_updated':
       await handleSubscriptionUpdated(eventData);
@@ -33,11 +31,8 @@ export const handleLemonSqueezyWebhook = functions.https.onRequest(async (reques
       console.log(`Unhandled event name: ${eventName}`);
   }
 
-  response.status(200).send('Webhook processed');
+  res.sendStatus(204);
 });
-
-
-
 
 function verifyLemonSqueezySignature(request: functions.https.Request): boolean {
   const secret = functions.config().lemonsqueezy.secret;
